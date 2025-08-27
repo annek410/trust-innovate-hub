@@ -215,8 +215,7 @@ const DiagnosticPersonnalise = () => {
           employes: roiData.employees,
           budget: roiData.investment,
           userEmail: diagnosticData.email,
-          userName: diagnosticData.nom,
-          diagnosticData
+          userName: diagnosticData.nom
         }
       });
 
