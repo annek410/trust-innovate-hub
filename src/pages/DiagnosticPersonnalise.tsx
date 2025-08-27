@@ -222,13 +222,30 @@ const DiagnosticPersonnalise = () => {
 
       console.log('📨 Réponse reçue:', { data, error });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors de l\'envoi:', error);
+        throw new Error(error.message || 'Erreur lors de la communication avec le serveur');
+      }
 
-      toast.success("Diagnostic envoyé ! Vous recevrez vos recommandations par email.");
+      toast.success("Diagnostic envoyé ! Vous recevrez vos recommandations par email dans quelques instants.");
       navigate('/');
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
-      toast.error("Erreur lors de l'envoi du diagnostic.");
+      
+      // Message d'erreur plus spécifique selon le type d'erreur
+      let errorMessage = "Erreur lors de l'envoi du diagnostic.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch') || error.message.includes('FunctionsFetchError')) {
+          errorMessage = "Problème de connexion. Veuillez vérifier votre connexion internet et réessayer.";
+        } else if (error.message.includes('timeout')) {
+          errorMessage = "La requête a pris trop de temps. Veuillez réessayer.";
+        } else {
+          errorMessage = `Erreur: ${error.message}`;
+        }
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
